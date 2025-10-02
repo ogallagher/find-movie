@@ -5,7 +5,7 @@ import { HttpMethod } from "../const/Http.js"
 import { RapidApiHeader } from "../const/RapidApi.js"
 import pino from "pino"
 import path from "path"
-import { SeriesGranularity, Show, ShowType } from "./const.js"
+import { SeriesGranularity, ShowUniCountry, ShowMultiCountry, ShowType } from "./const.js"
 
 const logger = pino({
   name: path.basename(import.meta.filename)
@@ -25,7 +25,7 @@ export default class MovieNightAvailabilityClient {
     }
   }
 
-  private async searchShowsByTitle(title: string, country = CountryCode2Char.Default): Promise<Show[]> {
+  private async searchShowsByTitle(title: string, country = CountryCode2Char.Default): Promise<ShowUniCountry[]> {
     logger.info(`search shows by title=${title} in country=${country}`)
     const url = new URL('/shows/search/title', baseUrl)
 
@@ -43,7 +43,7 @@ export default class MovieNightAvailabilityClient {
         }
       })
 
-      const res: Show[] = await response.json()
+      const res: ShowUniCountry[] = await response.json()
       return res
     }
     catch (err) {
@@ -51,8 +51,8 @@ export default class MovieNightAvailabilityClient {
     }
   }
 
-  private async getShowByTitle(title: string): Promise<Show | undefined> {
-    const shows: Show[] = await this.searchShowsByTitle(title)
+  private async getShowByTitle(title: string): Promise<ShowUniCountry | undefined> {
+    const shows: ShowUniCountry[] = await this.searchShowsByTitle(title)
     
     if (shows.length <= 0) {
       logger.warn(`no shows found matching title like ${title}`)
@@ -71,7 +71,7 @@ export default class MovieNightAvailabilityClient {
     return show
   }
 
-  private async getShowById(id: string): Promise<Show> {
+  private async getShowById(id: string): Promise<ShowMultiCountry> {
     const url = new URL(`/shows/${id}`, baseUrl)
 
     url.searchParams.set('series_granularity', SeriesGranularity.Show)
@@ -85,7 +85,7 @@ export default class MovieNightAvailabilityClient {
         }
       })
 
-      const res: Show = await response.json()
+      const res: ShowMultiCountry = await response.json()
       return res
     }
     catch (err) {
@@ -93,7 +93,7 @@ export default class MovieNightAvailabilityClient {
     }
   }
 
-  public async getShow(titleQuery: string): Promise<Show> {
+  public async getShow(titleQuery: string): Promise<ShowMultiCountry> {
     let show = await this.getShowByTitle(titleQuery)
 
     if (show === undefined) {
@@ -101,7 +101,6 @@ export default class MovieNightAvailabilityClient {
     }
 
     // fetch by id to get streaming options across all countries 
-    show = await this.getShowById(show.id)
-    return show
+    return await this.getShowById(show.id)
   }
 }

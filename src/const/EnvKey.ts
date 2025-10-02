@@ -4,5 +4,6 @@ enum EnvKey {
 export default EnvKey
 
 export enum OptKey {
-  Title = 'title'
+  Title = 'title',
+  OutDir = 'out-dir'
 }

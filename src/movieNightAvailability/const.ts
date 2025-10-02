@@ -22,17 +22,24 @@ export enum StreamingType {
   Subscription = 'subscription'
 }
 
-export type StreamingOptions = {
-  service: {
+export type StreamingService = {
+  id: string
+  name: string
+}
+
+export type StreamingOption = {
+  type: StreamingType
+  expiresOn?: number
+  availableSince: number
+  addon? : {
     id: string
     name: string
-    type: StreamingType
-    expiresOn: number
-    availableSince: number
   }
 }
 
-export type Show = {
+export type StreamingServiceOption = StreamingService & StreamingOption
+
+type Show = {
   itemType: SeriesGranularity
   showType: ShowType
   id: string
@@ -42,8 +49,23 @@ export type Show = {
   overview: string
   releaseYear: number
   runtime: number
+}
+
+export type ShowUniCountry = Show & {
   streamingOptions: {
-    [country: string]: StreamingOptions[]
+    [country: string]: {
+      service: StreamingServiceOption
+    }[]
   }
 }
 
+export type ShowMultiCountry = Show & {
+  streamingOptions: {
+    [country: string]: (
+      {
+        service: StreamingService
+      } 
+      & StreamingOption
+    )[]
+  }
+}
