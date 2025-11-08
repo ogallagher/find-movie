@@ -7,7 +7,8 @@
   "scripts": {
     "test": "mocha test",
     "postinstall": "tsc",
-    "cli": "node dist/index.js"
+    "clijs": "node dist/index.js",
+    "cli": "tsx src/index.ts"
   },
   "keywords": [
     "movie",
@@ -20,13 +21,16 @@
   "dependencies": {
     "dotenv": "^17.2.3",
     "pino": "^9.12.0",
+    "streaming-availability": "^4.4.0",
     "yargs": "^18.0.0"
   },
   "devDependencies": {
     "@types/dotenv": "^6.1.1",
     "@types/node": "^24.6.1",
     "@types/pino": "^7.0.4",
-    "@types/yargs": "^17.0.33"
+    "@types/yargs": "^17.0.33",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
   },
   "optionalDependencies": {
     "pino-pretty": "^13.1.1"
