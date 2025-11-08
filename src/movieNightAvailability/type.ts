@@ -2,5 +2,5 @@ export {
   StreamingOptionType as StreamingType,
   ShowType, 
   SearchShowsByTitleSeriesGranularityEnum as SeriesGranularity, 
-  Show
+  type Show
 } from "streaming-availability"

@@ -70,7 +70,8 @@ async function main() {
 				[streamingType: string]: {
 					addon?: string,
 					since: string,
-					until?: string
+					until?: string,
+					url: string
 				}
 			}
 		}
@@ -103,7 +104,8 @@ async function main() {
 						option.expiresOn !== undefined
 						? new Date(option.expiresOn).toISOString().substring(0, 10)
 						: undefined
-					)
+					),
+					url: option.link
 				}
 
 				if (option.type === StreamingType.Addon) {
