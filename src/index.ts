@@ -1,14 +1,14 @@
 import { config } from "dotenv"
-import MovieNightAvailabilityClient from "./movieNightAvailability/client.js"
 import pino from "pino"
 import yargs from "yargs"
 import { hideBin } from "yargs/helpers"
 import { OptKey } from "./const/EnvKey.js"
-import { StreamingType } from "./movieNightAvailability/const.js"
 import { mkdirSync } from "fs"
 import { writeFile } from "fs/promises"
 import { join } from "path"
+import MovieNightAvailabilityClient from "./movieNightAvailability/client.js"
 import { addonWithoutRegion } from "./movieNightAvailability/util.js"
+import { StreamingType } from "./movieNightAvailability/type.js"
 import CountryCode2Char from "./const/CountryCode.js"
 
 type CliArgs = {
