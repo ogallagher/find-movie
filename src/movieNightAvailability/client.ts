@@ -58,7 +58,7 @@ export default class MovieNightAvailabilityClient {
     return show
   }
 
-  private async getShowById(id: string): Promise<Show> {
+  public async getShowById(id: string): Promise<Show> {
     try {
       return await this.client.showsApi.getShow({
         id,

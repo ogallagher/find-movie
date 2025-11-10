@@ -12,8 +12,9 @@ import { StreamingType } from "./movieNightAvailability/type.js"
 import CountryCode2Char from "./const/CountryCode.js"
 
 type CliArgs = {
-	[OptKey.Title]: string
-	[OptKey.OutDir]: string
+	[OptKey.Title]?: string
+	[OptKey.OutDir]: string,
+	[OptKey.Id]?: string
 }
 
 const logger = pino({
@@ -37,10 +38,16 @@ function loadArgs(): CliArgs {
 	const argv = (
 		yargs(hideBin(process.argv))
 	)
+	.alias(OptKey.Help, 'h')
 	.option(OptKey.Title, {
 		alias: 't',
-		description: 'title of show',
-		demandOption: true
+		description: 'title of show/movie',
+		demandOption: false
+	})
+	.option(OptKey.Id, {
+		alias: 'i',
+		description: 'id of show/movie',
+		demandOption: false
 	})
 	.option(OptKey.OutDir, {
 		alias: 'o',
@@ -48,7 +55,13 @@ function loadArgs(): CliArgs {
 		default: 'out'
 	})
 
-	return argv.parse() as CliArgs
+	const args = argv.parse() as CliArgs
+
+	if (args[OptKey.Title] === undefined && args[OptKey.Id] === undefined) {
+		throw new Error(`one of --${OptKey.Title} or --${OptKey.Id} is required`)
+	}
+
+	return args
 }
 
 async function main() {
@@ -59,8 +72,10 @@ async function main() {
 	logger.info('init apiClient')
 	const apiClient = new MovieNightAvailabilityClient()
 
-	const show = await apiClient.getShow(
-		args[OptKey.Title]
+	const show = await (
+		args[OptKey.Title] !== undefined
+		? apiClient.getShow(args[OptKey.Title])
+		: apiClient.getShowById(args[OptKey.Id]!)
 	)
 
 	// present watch options by provider, then country
@@ -118,7 +133,7 @@ async function main() {
 	console.log(JSON.stringify(optionsByProvider, undefined, 2))
 
 	await writeFile(
-		join(args[OptKey.OutDir], `${show.title}_view-options.json`),
+		join(args[OptKey.OutDir], `${show.title}_${show.id}.json`),
 		JSON.stringify(optionsByProvider, undefined, 2),
 		{
 			encoding: 'utf8'
